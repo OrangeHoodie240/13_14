@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movies Application</title>
+
+    <style>
+        * {
+            margin: 0;
+            box-sizing: border-box;
+            padding: 0;
+        }
+
+        main {
+            width: 60%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        form {
+            width: 60%;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 20vh;
+            margin-bottom: 5vh;
+        }
+
+        table {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 3vh;
+        }
+
+        #sortRateLow {
+            margin-bottom: 3vh;
+        }
+    </style>
+
+</head>
+
+<body>
+    <main>
+        <h1>Movie Ratings</h1>
+        <form>
+            <label for='title'>
+                Title
+                <input id='title' type='text' minlength="2" placeholder="Title" required />
+            </label>
+            <br />
+            <br />
+            <label for='rating'>
+                Rating
+                <input id='rating' type='number' min='0' max="10" placeholder="Rating" required />
+            </label>
+            <br />
+            <br />
+            <button>Submit</button>
+        </form>
+        
+        <button id='sortAlph'>Sort Alphabetically</button>
+        <button id='sortRateHigh'>Sort Ratings From Highest</button>
+        <button id='sortRateLow'>Sort Ratings From Lowest</button>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Movie</th>
+                    <th>Rating</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+
+    </main>
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <script type='text/javascript'>
+
+        $(document).ready(function () {
+            $('form').on('submit', function (e) {
+                e.preventDefault();
+                const $title = $('#title');
+                const $rating = $('#rating');
+                const $tbody = $('tbody');
+                $tbody.append(`<tr><td>${$title.val()}</td><td>${$rating.val()}</td><td><button>Remove This Entry</button></td></tr>`);
+                $tbody.children().eq(-1).children().eq(-1).children().click(function (e) {
+                    $(e.target).parent().parent().remove();
+                });
+                $title.val('');
+                $rating.val('');
+
+                if ($tbody.children().length === 1) {
+                    const $main = $('main');
+                    $main.append('<button>Remove All</button>');
+                    $main.children().eq(-1).click(function (e) {
+                        $('tbody').html('');
+                        $(e.target).remove();
+                    })
+                }
+            });
+
+
+
+            function sort(callback) {
+                if (checkForEntries()) {
+                    let rows = Array.from($('tbody').children());
+                    rows = rows.map(b => $(b));
+                    rows = rows.sort(callback);
+
+                    const $tbody = $('tbody');
+                    $tbody.html('');
+                    rows.forEach(b => {
+                        b.appendTo('tbody');
+                    });
+                }
+            }
+
+            const checkForEntries = () => $('tbody').children().length > 1;
+            $('#sortAlph').click(() => sort((a, b) => {
+                const first = a.children().eq(0).text().toLowerCase();
+                const second = b.children().eq(0).text().toLowerCase();
+                if (first > second) {
+                    return 1;
+                }
+                else if (first < second) {
+                    return -1;
+                }
+                else {
+                    return 0;
+                }
+            }));
+
+            $('#sortRateHigh').click(() => {
+                sort((a,b)=>{
+                    const first = +(a.children().eq(1).text()); 
+                    const second = +(b.children().eq(1).text()); 
+                    return second - first;
+                });
+            });
+            
+            $('#sortRateLow').click(() => {
+                sort((a,b)=>{
+                    const first = +(a.children().eq(1).text()); 
+                    const second = +(b.children().eq(1).text()); 
+                    return first - second;
+                });
+            });
+
+        });
+    </script>
+</body>
+
+</html>
