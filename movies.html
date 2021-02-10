@@ -91,12 +91,13 @@
                 const $title = $('#title');
                 const $rating = $('#rating');
                 const $tbody = $('tbody');
-                $tbody.append(`<tr><td>${$title.val()}</td><td>${$rating.val()}</td><td><button>Remove This Entry</button></td></tr>`);
-                $tbody.children().eq(-1).children().eq(-1).children().click(function (e) {
-                    $(e.target).parent().parent().remove();
-                });
+                $tbody.append(`<tr><td>${$title.val()}</td><td>${$rating.val()}</td><td><button class='removeEntry'>Remove This Entry</button></td></tr>`);
                 $title.val('');
                 $rating.val('');
+
+                $tbody.on('click', '.removeEntry', function(e){
+                    $(e.target).parent().parent().remove(); 
+                })
 
                 if ($tbody.children().length === 1) {
                     const $main = $('main');
